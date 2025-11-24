@@ -1,0 +1,115 @@
+=== ENDPOINTS DE LA API - TECHREPAIR ===
+Proyecto: TechRepair Backend
+Evidencia: GA7-220501096-AA5-EV04
+Servidor: http://localhost:3000
+
+================================================================================
+
+1. REGISTRO DE USUARIO
+
+   Ruta: /api/auth/register
+   Método: POST
+   URL Completa: http://localhost:3000/api/auth/register
+   
+   Body (JSON):
+   {
+     "name": "string",
+     "email": "string",
+     "password": "string"
+   }
+   
+   Ejemplo de Request:
+   {
+     "name": "Cristian",
+     "email": "cristian.alarcon@itsperformance.com",
+     "password": "Performance2025"
+   }
+   
+   Respuesta Exitosa (Status 201 Created):
+   {
+     "message": "Registro exitoso - usuario creado correctamente",
+     "success": true,
+     "code": "REGISTRATION_SUCCESS",
+     "user": {
+       "id": "6923b24edf30ee3c4867dba3",
+       "name": "Cristian",
+       "email": "cristian.alarcon@itsperformance.com",
+       "createdAt": "2025-11-24T01:18:56.212Z"
+     }
+   }
+   
+   Códigos de Respuesta:
+   - 201 Created: Usuario registrado exitosamente
+   - 400 Bad Request: Faltan campos o hay error en validación
+   - 500 Internal Server Error: Error del servidor
+
+================================================================================
+
+2. LOGIN DE USUARIO
+
+   Ruta: /api/auth/login
+   Método: POST
+   URL Completa: http://localhost:3000/api/auth/login
+   
+   Body (JSON):
+   {
+     "email": "string",
+     "password": "string"
+   }
+   
+   Ejemplo de Request:
+   {
+     "email": "gabriella.londono@itsperformance.com",
+     "password": "Performance2025"
+   }
+   
+   Respuesta Exitosa (Status 200 OK):
+   {
+     "message": "Autenticación satisfactoria",
+     "success": true,
+     "code": "AUTHENTICATION_SUCCESS",
+     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     "user": {
+       "id": "6923b591c13df3117dief656",
+       "email": "gabriella.londono@itsperformance.com",
+       "name": "Gabriella"
+     }
+   }
+   
+   Códigos de Respuesta:
+   - 200 OK: Login exitoso y token generado
+   - 400 Bad Request: Credenciales inválidas
+   - 404 Not Found: Usuario no existe
+   - 500 Internal Server Error: Error del servidor
+
+================================================================================
+
+CARACTERÍSTICAS DE SEGURIDAD IMPLEMENTADAS
+
+✓ Encriptación de Contraseñas: Usando bcrypt
+✓ Autenticación con JWT: Token generado en login
+✓ Validación de Datos: Verificación de campos requeridos
+✓ Base de Datos: MongoDB con Mongoose
+✓ Estructura en Capas: Models, Controllers, Routes, Middleware
+
+================================================================================
+
+HEADERS RECOMENDADOS
+
+Para requests autenticadas (futuro):
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+
+================================================================================
+
+NOTAS IMPORTANTES
+
+1. El servidor debe estar corriendo en http://localhost:3000
+2. Las contraseñas se hashean antes de guardarse en la BD
+3. El token JWT tiene una duración limitada
+4. Todos los datos sensibles deben enviarse en el body (POST)
+5. Usar Content-Type: application/json en todas las requests
+
+================================================================================

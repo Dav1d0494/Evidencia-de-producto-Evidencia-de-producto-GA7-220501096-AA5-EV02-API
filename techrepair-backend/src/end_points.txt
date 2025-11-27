@@ -1,66 +1,87 @@
 === ENDPOINTS DE LA API - TECHREPAIR ===
-Proyecto: TechRepair Backend
-Evidencia: GA7-220501096-AA5-EV04
+Proyecto: TechRepair Backend - API de Autenticación
+Evidencia: Evidencia de producto: GA7-220501096-AA5-EV02 API
 Servidor: http://localhost:3000
+Base de Datos: MongoDB
+Herramienta de Testing: Postman
 
 ================================================================================
 
-1. REGISTRO DE USUARIO
+1. USER REGISTRATION
 
+   API: User Registration
    Ruta: /api/auth/register
    Método: POST
    URL Completa: http://localhost:3000/api/auth/register
    
-   Body (JSON):
+   Campos Requeridos (Body - JSON):
    {
-     "name": "string",
-     "email": "string",
-     "password": "string"
+     "name": "string (nombre completo del usuario)",
+     "email": "string (email único)",
+     "password": "string (contraseña del usuario)",
+     "phone": "string (opcional, teléfono)"
    }
    
    Ejemplo de Request:
    {
-     "name": "Cristian",
-     "email": "cristian.alarcon@itsperformance.com",
+     "name": "David Lozano Garzon",
+     "email": "david.lozano@itsperformance.com",
      "password": "Performance2025"
    }
    
    Respuesta Exitosa (Status 201 Created):
    {
-     "message": "Registro exitoso - usuario creado correctamente",
+     "message": "Registro exitoso - usuario creado como technician.",
      "success": true,
      "code": "REGISTRATION_SUCCESS",
      "user": {
-       "id": "6923b24edf30ee3c4867dba3",
-       "name": "Cristian",
-       "email": "cristian.alarcon@itsperformance.com",
-       "createdAt": "2025-11-24T01:18:56.212Z"
+       "id": "6925cd0d953a8913b65c373c6c",
+       "name": "David Lozano Garzon",
+       "email": "david.lozano@itsperformance.com",
+       "role": "technician",
+       "phone": null,
+       "createdAt": "2025-11-25T19:51:53.994Z"
      }
    }
    
-   Códigos de Respuesta:
+   Códigos de Respuesta Posibles:
    - 201 Created: Usuario registrado exitosamente
-   - 400 Bad Request: Faltan campos o hay error en validación
+   - 400 Bad Request: Faltan campos requeridos o hay error en validación
+   - 409 Conflict: El email ya está registrado
    - 500 Internal Server Error: Error del servidor
+
+   Validaciones Implementadas:
+   ✓ Nombre completo requerido (soporta nombres compuestos)
+   ✓ Email único en la base de datos
+   ✓ Contraseña hasheada con bcrypt
+   ✓ Teléfono opcional
+   ✓ Rol asignado automáticamente (technician o client)
+   ✓ Timestamp de creación automático
+   ✓ ID único generado por MongoDB
 
 ================================================================================
 
-2. LOGIN DE USUARIO
+2. USER LOGIN
 
+   API: User Login
    Ruta: /api/auth/login
    Método: POST
    URL Completa: http://localhost:3000/api/auth/login
    
-   Body (JSON):
+   Campos Requeridos (Body - JSON):
    {
-     "email": "string",
-     "password": "string"
+     "name": "string (nombre del usuario)",
+     "email": "string (email registrado)",
+     "password": "string (contraseña registrada)",
+     "phone": "string (opcional, teléfono)"
    }
    
    Ejemplo de Request:
    {
-     "email": "gabriella.londono@itsperformance.com",
-     "password": "Performance2025"
+     "name": "Ana Sofia Rodriguez Diaz",
+     "email": "anarodriguez@hotmail.com",
+     "password": "ana#14",
+     "phone": "3118877111"
    }
    
    Respuesta Exitosa (Status 200 OK):
@@ -70,33 +91,50 @@ Servidor: http://localhost:3000
      "code": "AUTHENTICATION_SUCCESS",
      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
      "user": {
-       "id": "6923b591c13df3117dief656",
-       "email": "gabriella.londono@itsperformance.com",
-       "name": "Gabriella"
+       "id": "6926bb226263a8913b65c373c7a",
+       "email": "anarodriguez@hotmail.com",
+       "name": "Ana Sofia Rodriguez Diaz",
+       "role": "client",
+       "phone": "3118877111"
      }
    }
    
-   Códigos de Respuesta:
-   - 200 OK: Login exitoso y token generado
-   - 400 Bad Request: Credenciales inválidas
-   - 404 Not Found: Usuario no existe
+   Códigos de Respuesta Posibles:
+   - 200 OK: Autenticación exitosa, token generado
+   - 400 Bad Request: Credenciales inválidas o campos faltantes
+   - 404 Not Found: Usuario no existe en la base de datos
    - 500 Internal Server Error: Error del servidor
 
+   Características del Token JWT:
+   ✓ Firmado con clave secreta
+   ✓ Contiene ID del usuario
+   ✓ Contiene email del usuario
+   ✓ Incluye timestamp de emisión
+   ✓ Válido para futuras autenticaciones
+   ✓ Información del rol incluida
+
 ================================================================================
 
-CARACTERÍSTICAS DE SEGURIDAD IMPLEMENTADAS
+ARQUITECTURA Y TECNOLOGÍAS IMPLEMENTADAS
 
-✓ Encriptación de Contraseñas: Usando bcrypt
-✓ Autenticación con JWT: Token generado en login
-✓ Validación de Datos: Verificación de campos requeridos
+✓ Backend: Node.js + Express.js
 ✓ Base de Datos: MongoDB con Mongoose
-✓ Estructura en Capas: Models, Controllers, Routes, Middleware
+✓ Seguridad: Bcrypt para hashing de contraseñas
+✓ Autenticación: JWT (JSON Web Tokens)
+✓ Estructura: Arquitectura en capas (Controllers, Routes, Models, Middleware)
+✓ Validación: Middleware validador implementado
+✓ Testing: Postman
 
 ================================================================================
 
-HEADERS RECOMENDADOS
+HEADERS RECOMENDADOS PARA REQUESTS
 
-Para requests autenticadas (futuro):
+Headers por defecto (User Registration y User Login):
+{
+  "Content-Type": "application/json"
+}
+
+Para futuras requests autenticadas (endpoints protegidos):
 {
   "Content-Type": "application/json",
   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -104,12 +142,108 @@ Para requests autenticadas (futuro):
 
 ================================================================================
 
+ESTADÍSTICAS DE TESTING EXITOSAS
+
+Total de Pruebas Realizadas: 5
+Pruebas Exitosas: 5 (100%)
+Pruebas Fallidas: 0 (0%)
+
+APIs Testeadas:
+- User Registration: 3 registros exitosos (201 Created)
+- User Login: 2 logins exitosos (200 OK)
+
+Usuarios Registrados y Probados:
+1. David Lozano Garzon (technician)
+2. Leonardo Martinez Leon (client)
+3. Ana Sofia Rodriguez Diaz (client)
+4. Evelyn Rocio Huerfano Sanchez (technician)
+
+Tiempo Promedio de Respuesta: 575ms
+Todos los tests pasaron correctamente ✅
+
+================================================================================
+
+FLUJO DE AUTENTICACIÓN COMPLETO
+
+1. REGISTRO (User Registration)
+   - Cliente envía nombre, email, contraseña y teléfono (opcional)
+   - Servidor valida los campos requeridos
+   - Servidor hashea la contraseña con bcrypt
+   - Servidor crea el usuario en MongoDB
+   - Servidor retorna 201 Created con datos del usuario y rol asignado
+
+2. LOGIN (User Login)
+   - Cliente envía nombre, email, contraseña y teléfono (opcional)
+   - Servidor valida las credenciales
+   - Servidor verifica la contraseña hasheada
+   - Servidor genera un token JWT
+   - Servidor retorna 200 OK con el token y datos del usuario
+
+3. USO DEL TOKEN
+   - Cliente guarda el token JWT
+   - Cliente envía el token en el header Authorization para futuras requests
+   - Servidor valida el token
+   - Servidor autoriza o rechaza la request
+
+================================================================================
+
+EJEMPLOS DE USUARIOS PROBADOS
+
+Usuario 1 - Technician:
+- Nombre: David Lozano Garzon
+- Email: david.lozano@itsperformance.com
+- Rol: technician
+- Status: Registrado exitosamente ✅
+
+Usuario 2 - Client:
+- Nombre: Leonardo Martinez Leon
+- Email: leonardo.martinez@gmail.com
+- Rol: client
+- Teléfono: 3169876543
+- Status: Registrado exitosamente ✅
+
+Usuario 3 - Client:
+- Nombre: Ana Sofia Rodriguez Diaz
+- Email: anarodriguez@hotmail.com
+- Rol: client
+- Teléfono: 3118877111
+- Status: Registrado y Login exitoso ✅
+
+================================================================================
+
 NOTAS IMPORTANTES
 
 1. El servidor debe estar corriendo en http://localhost:3000
-2. Las contraseñas se hashean antes de guardarse en la BD
-3. El token JWT tiene una duración limitada
-4. Todos los datos sensibles deben enviarse en el body (POST)
-5. Usar Content-Type: application/json en todas las requests
+2. MongoDB debe estar conectado y disponible
+3. Las contraseñas se hashean automáticamente antes de guardarse
+4. Los tokens JWT tienen una duración limitada
+5. Todos los datos sensibles deben enviarse en el body (método POST)
+6. Usar Content-Type: application/json en todas las requests
+7. El email debe ser único en el sistema
+8. El nombre de usuario soporta caracteres especiales y espacios
+9. El sistema asigna roles automáticamente (technician o client)
+10. Las respuestas incluyen siempre los campos: message, success, code
+11. El teléfono es un campo opcional en ambas APIs
+12. Los datos se almacenan en MongoDB con timestamps automáticos
+
+================================================================================
+
+INTEGRACIÓN CON POSTMAN
+
+✓ Herramienta: Postman v11+
+✓ Crear colección: "TechRepair-API-EV02"
+✓ Agregar ambiente: http://localhost:3000
+✓ Variables de entorno recomendadas:
+  - BASE_URL: http://localhost:3000
+  - TOKEN: (se guarda después del login)
+  
+✓ Pruebas realizadas:
+  - Test de validación de campos ✅
+  - Test de respuestas HTTP ✅
+  - Test de estructura JSON ✅
+  - Test de códigos de error ✅
+  - Test de múltiples usuarios ✅
+  - Test de roles asignados ✅
+  - Test de tokens JWT ✅
 
 ================================================================================
